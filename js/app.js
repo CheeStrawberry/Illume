@@ -1,7 +1,7 @@
 let stack=[],route='',U={};
 const AUTH=new Set(['welcome','signup','login','forgot','checkemail','newpass','setup1','setup2','setup3','allset','offline','oops','loading','expired','update']);
 const parse=r=>{const a=r.split('|');return [a[0],a.slice(1)]};
-function applyTheme(v){let t=v||S.phoneTheme;if(t==='match')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';$('#phone').dataset.theme=t;}
+function applyTheme(v){let t=v||S.phoneTheme;if(t==='match')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';$('#phone').dataset.theme=t;document.documentElement.dataset.t=t;}
 function sheet(html){closeSheet();const p=$('#phone');p.insertAdjacentHTML('beforeend',`<div class="scrim" data-a="closesheet"></div><div class="sheet" id="sheet"><div class="grab"></div>${html}</div>`)}
 function closeSheet(){document.querySelectorAll('.scrim,.sheet').forEach(e=>e.remove())}
 let tt;function toast(t){document.querySelectorAll('.toast').forEach(e=>e.remove());$('#phone').insertAdjacentHTML('beforeend',`<div class="toast">${esc(t)}</div>`);clearTimeout(tt);tt=setTimeout(()=>document.querySelectorAll('.toast').forEach(e=>e.remove()),2400)}
@@ -17,7 +17,7 @@ if(lay){oldp.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));const 
 const html=`<div class="page ${cls}${noAnim?' still':''}${(!noAnim&&!r.raw)?' pgin':''}${lay?' in in-'+cls:''}" style="position:absolute;inset:0"><div class="scr ${r.b?'fixedbtm':''} ${r.raw?'':'stg'}" ${r.raw?'style="padding:0;overflow:hidden"':''}>${r.h}</div>${(r.b||r.n)?'<div class="botfade"></div>':''}${r.b?`<div class="btm${r.n?' withnav':''}${r.bo?' old':''}">${r.b}</div>`:''}${r.n?nav(r.n):''}</div>`;
 let bg=scr.querySelector('#bg');if(!bg){scr.innerHTML=`<div id="bg">${glows(1)}</div>`;bg=scr.querySelector('#bg')}bg.classList.toggle('off',!r.g);scr.querySelectorAll('.page').forEach(x=>x.remove());scr.insertAdjacentHTML('beforeend',html);
 if(!r.raw){[...$('.scr').children].forEach((el,i)=>el.style.setProperty('--i',Math.min(i,12)))}
-{const sc2=$('.scr'),bt=$('.btm');if(sc2&&!r.raw)sc2.style.paddingBottom=(bt?bt.offsetHeight-28+(r.n?100:0):(r.n?130:48))+'px'}fades();{const s3=$('.scr');if(s3)s3.addEventListener('scroll',fades,{passive:true})}if(keep)$('.scr').scrollTop=keep;placeNav();if(r.after)r.after();if(!noAnim)countUp();document.querySelectorAll('#side [data-r]').forEach(b=>b.style.background=b.dataset.r===route?'#262850':'');}
+{const sc2=$('.scr'),bt=$('.btm');if(sc2&&!r.raw)sc2.style.paddingBottom=(bt?bt.offsetHeight-28+(r.n?100:0):(r.n?130:48))+(window.SAB||0)+'px'}fades();{const s3=$('.scr');if(s3)s3.addEventListener('scroll',fades,{passive:true})}if(keep)$('.scr').scrollTop=keep;placeNav();if(r.after)r.after();if(!noAnim)countUp();document.querySelectorAll('#side [data-r]').forEach(b=>b.style.background=b.dataset.r===route?'#262850':'');}
 function go(to,reset){const nv=NAVR.has(parse(to)[0])&&NAVR.has(parse(route)[0]);const inX=route.startsWith('x|'),toX=to.startsWith('x|');if(reset)stack=[];else if(inX){stack=stack.filter(r=>!r.startsWith('x|'));if(toX&&false)stack.push(route)}else if(route)stack.push(route);if(nv||reset)DIR='fade';route=to;U={};render();$('.scr')&&($('.scr').scrollTop=0)}
 function back(){applyTheme();if(!stack.length){go('home',true);return}route=stack.pop();U={};DIR='bck';render()}
 function reload(){render(true)}
@@ -89,9 +89,27 @@ if(m[n])return m[n];if(n==='field')return FLABEL[p[0]];if(n==='x')return {intro:
 return({person:'Profile · ',msg:'Message · ',convo:'Chat · ',ask:'Ask · ',answer:'Answer · '}[n]||n)+(PEOPLE[p[0]]?PEOPLE[p[0]].first:'')};
 function buildSide(){$('#side').innerHTML=`<div class="logo">Illume</div><p>Clickable prototype of the Figma design. Use the app on the right, or jump to any screen below.</p><div style="margin-top:10px"><button data-t="dark">Dark</button><button data-t="light">Light</button></div>`+MENU.map(([h,l])=>`<h4>${h}</h4>`+l.map(r=>`<button data-r="${r}">${LBL(r)}</button>`).join('')).join('')+`<h4>Data</h4><button data-reset>Reset all demo data</button>`}
 document.addEventListener('click',e=>{const b=e.target.closest('#side button');if(!b)return;if(b.dataset.r){stack=[];route=b.dataset.r;U={};if(route==='journal'||route==='newentry')UNLOCKED=true;render()}if(b.dataset.t){S.phoneTheme=b.dataset.t;save();applyTheme()}if(b.hasAttribute('data-reset')){S=blank();save();UNLOCKED=false;go('welcome',true)}});
-function fit(){const sw=innerWidth>820?310:0;const s=Math.min((innerWidth-sw)/440,innerHeight/(innerWidth<=500?956:1000),1.15);$('#frame').style.transform=`scale(${s})`;$('#frame').style.margin=`${(956*s-956)/2}px ${(440*s-440)/2}px`}
+function fit(){
+const APP=innerWidth<=500||(matchMedia('(pointer:coarse)').matches&&innerWidth<=900);
+document.body.classList.toggle('app',APP);
+const F=$('#frame');
+if(APP){
+const s=innerWidth/440,pr=$('#probe'),cs=pr?getComputedStyle(pr):null;
+const st=cs?parseFloat(cs.paddingTop)||0:0,sb=cs?parseFloat(cs.paddingBottom)||0:0;
+window.SAB=Math.round(sb/s);
+document.documentElement.style.setProperty('--pt',Math.round(st/s+18)+'px');
+document.documentElement.style.setProperty('--sab',window.SAB+'px');
+F.style.width='440px';F.style.height=(innerHeight/s)+'px';F.style.transform=`scale(${s})`;F.style.transformOrigin='0 0';F.style.margin='0';F.style.position='fixed';F.style.left='0';F.style.top='0';
+}else{
+window.SAB=0;
+document.documentElement.style.removeProperty('--pt');document.documentElement.style.removeProperty('--sab');
+const sw=DEV&&innerWidth>820?310:0;const s=Math.min((innerWidth-sw)/440,innerHeight/1000,1.15);
+F.style.width='440px';F.style.height='956px';F.style.position='relative';F.style.left='';F.style.top='';F.style.transformOrigin='center';
+F.style.transform=`scale(${s})`;F.style.margin=`${(956*s-956)/2}px ${(440*s-440)/2}px`;
+}}
 function clock(){}
-document.body.innerHTML=`<div id="stage"><div id="side"></div><div id="frame"><div id="phone"><div id="screen"></div><div id="topfade"></div><div id="sys">${SYSBAR}</div><div id="home"></div></div></div></div>`;
-buildSide();applyTheme();fit();addEventListener('resize',fit);
+const DEV=new URLSearchParams(location.search).has('dev');
+document.body.innerHTML=`<div id="probe"></div><div id="stage"><div id="side"></div><div id="frame"><div id="phone"><div id="screen"></div><div id="topfade"></div><div id="sys">${SYSBAR}</div><div id="home"></div></div></div></div>`;
+if(DEV)buildSide();else $('#side').remove();applyTheme();fit();addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,200));
 const startRoute=new URLSearchParams(location.search).get('r');
 route=startRoute||'splash';if(startRoute&&startRoute==='journal')UNLOCKED=true;render();

@@ -18,7 +18,7 @@ input,textarea{font:inherit;color:inherit;background:none;border:0;outline:0;wid
 #frame{width:440px;height:956px;transform-origin:center;flex:none;position:relative}
 #phone{position:absolute;inset:0;background:var(--canvas);color:var(--tp);border-radius:48px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6);transition:background .3s}
 @media(max-width:500px){#phone{border-radius:0;box-shadow:none}}
-.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding:59px 24px 130px}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding:var(--pt,59px) 24px 130px}
 .scr::-webkit-scrollbar{display:none}
 .scr.fixedbtm{padding-bottom:210px}
 .glow{position:absolute;pointer-events:none;border-radius:50%;z-index:0}
@@ -355,3 +355,18 @@ svg.i .f{fill:currentColor;stroke:none}
 .botfade::after{-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
 .botfade{background:linear-gradient(to top,color-mix(in srgb,var(--canvas) 62%,transparent) 0,color-mix(in srgb,var(--canvas) 40%,transparent) 42%,color-mix(in srgb,var(--canvas) 14%,transparent) 74%,transparent 100%)}
 .mapwrap,.mapwrap svg{pointer-events:none}.mapwrap .mapnode{pointer-events:auto}
+
+/* app mode — real phones: fill the screen, no device frame or fake system UI */
+#probe{position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body{position:fixed;inset:0;width:100%;height:100%;overscroll-behavior:none;touch-action:manipulation}
+html,body.app{background:#0e1028}html[data-t=light],html[data-t=light] body.app{background:#fffbf2}
+body.app #stage{display:block;position:fixed;inset:0}
+body.app #sys,body.app #home{display:none}
+body.app #phone{border-radius:0;box-shadow:none}
+body.app .nav{bottom:calc(var(--sab,0px) + 18px)}
+body.app .btm.withnav{bottom:calc(var(--sab,0px) + 84px)}
+body.app .btm:not(.withnav){padding-bottom:calc(var(--sab,0px) + 20px)}
+body.app .sheet{padding-bottom:calc(var(--sab,0px) + 30px)}
+body.app .toast{bottom:calc(var(--sab,0px) + 104px)}
+body.app #topfade{height:calc(var(--pt,59px) + 56px)}
