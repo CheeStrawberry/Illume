@@ -370,3 +370,7 @@ body.app .btm:not(.withnav){padding-bottom:calc(var(--sab,0px) + 20px)}
 body.app .sheet{padding-bottom:calc(var(--sab,0px) + 30px)}
 body.app .toast{bottom:calc(var(--sab,0px) + 104px)}
 body.app #topfade{height:calc(var(--pt,59px) + 56px)}
+
+.rq{color:var(--ef);font-weight:600}
+body.app .wl-head{top:auto!important;bottom:calc(var(--sab,0px) + 306px)!important}
+body.app .wl-head+p{top:auto!important;bottom:calc(var(--sab,0px) + 236px)!important}

@@ -31,6 +31,7 @@ const ACT={
 go(el){go(el.dataset.to)},back(){back()},reset(el){go(el.dataset.to,true)},toast(el){toast(el.dataset.t||'Saved')},
 eye(el){const i=document.getElementById(el.dataset.id);const show=i.type==='password';i.type=show?'text':'password';el.innerHTML=ic(show?'eye-off':'eye',22,'eye')},
 signup(){const n=val('su_name').trim(),e=val('su_email').trim(),pw=val('su_pw');U.name=n;U.email=e;if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){U.err='email';reload();return}if(pw.length<7){U.err='pw';reload();return}S.name=n||'Sam';S.email=e;S.loggedIn=true;save();go('setup1',true)},
+guest(){S.name='Maya';S.grade=S.grade||11;S.loggedIn=true;S.guest=true;save();go('home',true)},
 login(){const e=val('li_email').trim(),pw=val('li_pw');U.email=e;if(!e||pw.length<7){U.err=true;reload();return}S.loggedIn=true;S.email=e;save();go('home',true)},
 sendreset(){U.email=val('fp_email');const em=U.email;go('checkemail');U.email=em;render()},
 savepw(){toast('Password updated');go('login',true)},
