@@ -1,4 +1,4 @@
-# Illume · clickable prototype
+# Illume
 
 Find what lights you up. A student growth platform for Grades 10–12: Explore, Reflect, Grow.
 
